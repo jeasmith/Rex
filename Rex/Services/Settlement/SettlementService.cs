@@ -1,5 +1,5 @@
 ﻿using Rex.Domain.Models;
-namespace Rex.Domain.Settlement
+namespace Rex.Domain.Services.Settlement
 {
 	public class SettlementService
 	{

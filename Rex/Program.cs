@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Rex.Domain.Models;
-using Rex.Domain.Settlement;
+using Rex.Domain.Services.Settlement;
 
 namespace Rex.Domain
 {
