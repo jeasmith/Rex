@@ -6,6 +6,6 @@ namespace Rex.Domain.Models
 	{
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-		public Guid Uid { get; set; }
+		public Guid Id { get; set; }
 	}
 }

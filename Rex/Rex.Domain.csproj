@@ -34,12 +34,13 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\StakeHolder.cs" />
+    <Compile Include="Models\Stakeholder.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Party.cs" />
     <Compile Include="Services\Settlement\SettlementService.cs" />
     <Compile Include="Models\Expense.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Models\Payment.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

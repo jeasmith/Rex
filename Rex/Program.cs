@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Rex.Domain.Models;
 using Rex.Domain.Services.Settlement;
+using System.Linq;
 
 namespace Rex.Domain
 {
@@ -15,10 +16,15 @@ namespace Rex.Domain
 
 			settlementService.CalculateDebts(party);
 
-			party.StakeHolders.ForEach(s =>
+			Console.WriteLine($"Total Party Balance: {party.GetBalance()}");
+			Console.WriteLine($"Divised Party Balance: {party.GetBalance() / party.Stakeholders.Count()}");
+
+			party.Stakeholders.ForEach(s =>
 			{
 				Console.WriteLine($"{s.Contact.FirstName} {s.Contact.LastName} - Debt: {s.Debt}");
 			});
+
+			settlementService.CalculatePaymentMappings(party);
 		}
 
 		static Party PopulateParty()
@@ -26,9 +32,9 @@ namespace Rex.Domain
 			Party alexanderParty = new Party()
 			{
 				Id = new Guid("{5F896357-3213-4B1B-8F0D-492CEDB90381}"),
-				StakeHolders = new List<StakeHolder>
+				Stakeholders = new List<Stakeholder>
 				{
-					new StakeHolder()
+					new Stakeholder()
 					{
 						Contact = new Contact()
 						{
@@ -48,7 +54,7 @@ namespace Rex.Domain
 						}
 					},
 
-					new StakeHolder()
+					new Stakeholder()
 					{
 						Contact = new Contact()
 						{
@@ -68,7 +74,7 @@ namespace Rex.Domain
 						}
 					},
 
-					new StakeHolder()
+					new Stakeholder()
 					{
 						Contact = new Contact()
 						{
@@ -87,7 +93,7 @@ namespace Rex.Domain
 							}
 						}
 					},
-					new StakeHolder()
+					new Stakeholder()
 					{
 						Contact = new Contact()
 						{
@@ -107,7 +113,7 @@ namespace Rex.Domain
 						}
 					},
 
-					new StakeHolder()
+					new Stakeholder()
 					{
 						Contact = new Contact()
 						{

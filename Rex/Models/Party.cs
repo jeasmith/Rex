@@ -7,11 +7,11 @@ namespace Rex.Domain.Models
 	public class Party
 	{
 		public Guid Id { get; set; }
-		public IEnumerable<StakeHolder> StakeHolders { get; set; }
+		public IEnumerable<Stakeholder> Stakeholders { get; set; }
 
 		public decimal GetBalance()
 		{
-			return StakeHolders.Sum(s => s.GetBalance());
+			return Stakeholders.Sum(s => s.GetBalance());
 		}
 	}
 }

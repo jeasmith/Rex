@@ -12,5 +12,15 @@ namespace Rex.Domain
 				action(item);
 			}
 		}
+
+		public static IEnumerable<T> AddItem<T>(this IEnumerable<T> enumeration, T value)
+		{
+			foreach (var current in enumeration)
+			{
+				yield return current;
+			}
+
+			yield return value;
+		}
 	}
 }
