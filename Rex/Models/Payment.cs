@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Rex.Domain.Models
 {
 	public class Payment

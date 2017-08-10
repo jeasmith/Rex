@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Rex.Domain
+namespace Rex.Domain.Extensions
 {
 	public static class IEnumerableExtensions
 	{

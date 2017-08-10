@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Rex.Domain.Extensions;
 using Rex.Domain.Models;
 using Rex.Domain.Services.Settlement;
-using System.Linq;
 
 namespace Rex.Domain
 {
