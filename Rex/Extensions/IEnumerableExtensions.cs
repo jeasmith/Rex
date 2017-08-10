@@ -15,9 +15,9 @@ namespace Rex.Domain.Extensions
 
 		public static IEnumerable<T> AddItem<T>(this IEnumerable<T> enumeration, T value)
 		{
-			foreach (var current in enumeration)
+			foreach (var existingItem in enumeration)
 			{
-				yield return current;
+				yield return existingItem;
 			}
 
 			yield return value;

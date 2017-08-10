@@ -9,7 +9,7 @@ namespace Rex.Domain.Models
 		public IEnumerable<Expense> Expenses { get; set; }
 		public decimal Debt { get; set; }
 		public IEnumerable<Payment> Payments { get; set; }
-		public decimal CachedReducedDebt { get; set; }
+		public decimal CachedCalculatedDebt { get; set; }
 
 		public decimal GetBalance()
 		{

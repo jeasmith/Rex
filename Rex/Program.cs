@@ -30,9 +30,8 @@ namespace Rex.Domain
 
 		static Party PopulateParty()
 		{
-			Party alexanderParty = new Party()
+			return new Party()
 			{
-				Id = new Guid("{5F896357-3213-4B1B-8F0D-492CEDB90381}"),
 				Stakeholders = new List<Stakeholder>
 				{
 					new Stakeholder()
@@ -135,8 +134,6 @@ namespace Rex.Domain
 					}
 				}
 			};
-
-			return alexanderParty;
 		}
 	}
 }

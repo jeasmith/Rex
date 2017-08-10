@@ -18,50 +18,30 @@ namespace Rex.Domain.Services.Settlement
 
 		public void CalculatePaymentMappings(Party party)
 		{
-			party.Stakeholders.ForEach(s => s.CachedReducedDebt = s.Debt);
+			party.Stakeholders.ForEach(s => s.CachedCalculatedDebt = s.Debt);
 
-			while (party.Stakeholders.Any(s => s.CachedReducedDebt != 0M))
+			while (party.Stakeholders.Any(s => s.CachedCalculatedDebt != 0M))
 			{
 				Stakeholder highestDebtStakeholder = GetHighestDebtStakeholder(party);
-				Console.WriteLine($"Highest debt stakeholder: {highestDebtStakeholder.Contact.FirstName} {highestDebtStakeholder.Contact.LastName}");
 
 				Stakeholder lowestDebtStakeholder = GetLowestDebtStakeholder(party);
-				Console.WriteLine($"Lowest debt stakeholder: {lowestDebtStakeholder.Contact.FirstName} {lowestDebtStakeholder.Contact.LastName}");
 
 				if (highestDebtStakeholder.Payments == null)
 				{
 					highestDebtStakeholder.Payments = new List<Payment>();
 				}
 
-				if (Math.Abs(highestDebtStakeholder.CachedReducedDebt) <= Math.Abs(lowestDebtStakeholder.CachedReducedDebt))
+				if (Math.Abs(highestDebtStakeholder.CachedCalculatedDebt) <= Math.Abs(lowestDebtStakeholder.CachedCalculatedDebt))
 				{
-					highestDebtStakeholder.Payments = highestDebtStakeholder.Payments.AddItem(new Payment
-					{
-						Ammount = highestDebtStakeholder.CachedReducedDebt,
-						Payer = highestDebtStakeholder.Contact,
-						Payee = lowestDebtStakeholder.Contact
-					});
-
-					lowestDebtStakeholder.CachedReducedDebt += highestDebtStakeholder.CachedReducedDebt;
-
-					highestDebtStakeholder.CachedReducedDebt -= highestDebtStakeholder.CachedReducedDebt;
+					SettleHighestDebtStakeholder(highestDebtStakeholder, lowestDebtStakeholder);
 				}
 
-				else if (Math.Abs(highestDebtStakeholder.CachedReducedDebt) > Math.Abs(lowestDebtStakeholder.CachedReducedDebt))
+				else if (Math.Abs(highestDebtStakeholder.CachedCalculatedDebt) > Math.Abs(lowestDebtStakeholder.CachedCalculatedDebt))
 				{
-					highestDebtStakeholder.Payments = highestDebtStakeholder.Payments.AddItem(new Payment
-					{
-						Ammount = Math.Abs(lowestDebtStakeholder.CachedReducedDebt),
-						Payer = highestDebtStakeholder.Contact,
-						Payee = lowestDebtStakeholder.Contact
-					});
-
-					highestDebtStakeholder.CachedReducedDebt += lowestDebtStakeholder.CachedReducedDebt;
-
-					lowestDebtStakeholder.CachedReducedDebt -= lowestDebtStakeholder.CachedReducedDebt;
+					SettleLowestDebtStakeholder(highestDebtStakeholder, lowestDebtStakeholder);
 				}
 
-				party.Stakeholders.ForEach(s => Console.WriteLine($"{s.Contact.FirstName} {s.Contact.LastName} - {s.CachedReducedDebt}"));
+				party.Stakeholders.ForEach(s => Console.WriteLine($"{s.Contact.FirstName} {s.Contact.LastName} - {s.CachedCalculatedDebt}"));
 			}
 
 			PrintMappings(party);
@@ -69,22 +49,58 @@ namespace Rex.Domain.Services.Settlement
 
 		private Stakeholder GetHighestDebtStakeholder(Party party)
 		{
-			return party
+			Stakeholder highestDebtStakeholder = party
 				.Stakeholders
 				.Aggregate
 				(
-					(currentMax, s) => (currentMax == null || (s.CachedReducedDebt) > currentMax.CachedReducedDebt ? s : currentMax)
+					(currentMax, s) => (currentMax == null || (s.CachedCalculatedDebt) > currentMax.CachedCalculatedDebt ? s : currentMax)
 				);
+
+			Console.WriteLine($"Highest debt stakeholder: {highestDebtStakeholder.Contact.FirstName} {highestDebtStakeholder.Contact.LastName}");
+
+			return highestDebtStakeholder;
 		}
 
 		private Stakeholder GetLowestDebtStakeholder(Party party)
 		{
-			return party
+			Stakeholder lowestDebtStakeholder = party
 				.Stakeholders
 				.Aggregate
 				(
-					(currentMin, s) => (currentMin == null || (s.CachedReducedDebt) < currentMin.CachedReducedDebt ? s : currentMin)
+					(currentMin, s) => (currentMin == null || (s.CachedCalculatedDebt) < currentMin.CachedCalculatedDebt ? s : currentMin)
 				);
+
+			Console.WriteLine($"Lowest debt stakeholder: {lowestDebtStakeholder.Contact.FirstName} {lowestDebtStakeholder.Contact.LastName}");
+
+			return lowestDebtStakeholder;
+		}
+
+		private void SettleHighestDebtStakeholder(Stakeholder highestDebtStakeholder, Stakeholder lowestDebtStakeholder)
+		{
+			highestDebtStakeholder.Payments = highestDebtStakeholder.Payments.AddItem(new Payment
+			{
+				Ammount = highestDebtStakeholder.CachedCalculatedDebt,
+				Payer = highestDebtStakeholder.Contact,
+				Payee = lowestDebtStakeholder.Contact
+			});
+
+			lowestDebtStakeholder.CachedCalculatedDebt += highestDebtStakeholder.CachedCalculatedDebt;
+
+			highestDebtStakeholder.CachedCalculatedDebt -= highestDebtStakeholder.CachedCalculatedDebt;
+		}
+
+		private void SettleLowestDebtStakeholder(Stakeholder highestDebtStakeholder, Stakeholder lowestDebtStakeholder)
+		{
+			highestDebtStakeholder.Payments = highestDebtStakeholder.Payments.AddItem(new Payment
+			{
+				Ammount = Math.Abs(lowestDebtStakeholder.CachedCalculatedDebt),
+				Payer = highestDebtStakeholder.Contact,
+				Payee = lowestDebtStakeholder.Contact
+			});
+
+			highestDebtStakeholder.CachedCalculatedDebt += lowestDebtStakeholder.CachedCalculatedDebt;
+
+			lowestDebtStakeholder.CachedCalculatedDebt -= lowestDebtStakeholder.CachedCalculatedDebt;
 		}
 
 		private void PrintMappings(Party party)
@@ -98,7 +114,7 @@ namespace Rex.Domain.Services.Settlement
 						s.Payments
 					 	.ForEach(p =>
 					 	{
-						 	Console.WriteLine($"{p.Payer.FirstName} {p.Payer.LastName} => {p.Payee.FirstName} {p.Payee.LastName} - {p.Ammount}");
+							 Console.WriteLine($"{p.Payer.FirstName} {p.Payer.LastName} => {p.Payee.FirstName} {p.Payee.LastName} - {p.Ammount}");
 					 	});
 					}
 				}
